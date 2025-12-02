@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+python-dotenv
+pydantic-settings
+langchain == 0.3.27
+langchain-community == 0.3.29
+langchain-core
+langchain-openai
+langgraph
+mcp
+langchain-mcp-adapters
+dateparser
+python-dateutil
+jinja2
+openai
+websockets

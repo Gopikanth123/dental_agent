@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant</title>
+    <style>
+        :root {
+            --background-color: #1a1a1a;
+            --panel-background: #2c2c2e;
+            --text-color: #f0f0f0;
+            --text-secondary: #a0a0a5;
+            --accent-green: #34c759;
+            --accent-blue: #007aff;
+            --assistant-bubble: #005543;
+            --user-bubble: #4a4a4c;
+            --border-color: #444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            grid-template-rows: auto 1fr;
+            gap: 24px;
+            height: calc(100vh - 48px);
+        }
+
+        .panel {
+            background-color: var(--panel-background);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .recording-panel {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .call-details-panel {
+            grid-column: 1 / 2;
+            grid-row: 2 / 3;
+        }
+
+        .transcripts-panel {
+            grid-column: 2 / 3;
+            grid-row: 2 / 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel h2 {
+            margin: 0 0 24px 0;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .panel h2.call-details-title {
+            color: var(--accent-blue);
+        }
+
+        /* Recording Panel Styles */
+        #record-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background-color: #e53935;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+        #record-button.recording {
+            background-color: #f5f5f5;
+        }
+        #record-button .icon-pause {
+            width: 16px;
+            height: 16px;
+            background-color: #fff;
+        }
+        #record-button.recording .icon-pause {
+             background-color: #e53935;
+        }
+        .recording-info {
+            flex-grow: 1;
+        }
+        .recording-info h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .recording-info p {
+            margin: 4px 0 0;
+            color: var(--text-secondary);
+        }
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 40px;
+        }
+        .waveform .bar {
+            width: 4px;
+            background-color: var(--text-secondary);
+            border-radius: 2px;
+            animation: quiet 1.5s ease-in-out infinite;
+        }
+        .waveform.active .bar {
+            animation: sound 1s ease-in-out infinite;
+        }
+        @keyframes sound {
+            0%, 100% { height: 4px; background-color: #e53935; }
+            50% { height: 30px; background-color: #e53935;}
+        }
+        @keyframes quiet {
+             0%, 100% { height: 4px; }
+            50% { height: 8px; }
+        }
+        .waveform .bar:nth-child(2) { animation-delay: 0.2s; }
+        .waveform .bar:nth-child(3) { animation-delay: 0.4s; }
+        .waveform .bar:nth-child(4) { animation-delay: 0.6s; }
+        .waveform .bar:nth-child(5) { animation-delay: 0.8s; }
+
+
+        /* Call Details Styles */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .detail-item p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .detail-item .value {
+            margin-top: 4px;
+            font-weight: 500;
+            font-size: 16px;
+            color: var(--text-color);
+        }
+        .detail-item .value.status-completed {
+            color: var(--accent-green);
+        }
+
+        /* Transcripts Styles */
+        #transcript-box {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .message-bubble {
+            display: flex;
+            margin-bottom: 16px;
+            max-width: 80%;
+        }
+        .message-bubble .text {
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+        .message-bubble.assistant {
+            justify-content: flex-start;
+        }
+         .message-bubble.assistant .text {
+            background-color: var(--assistant-bubble);
+            border-bottom-left-radius: 4px;
+        }
+        .message-bubble.user {
+            justify-content: flex-end;
+            margin-left: auto;
+        }
+        .message-bubble.user .text {
+            background-color: var(--user-bubble);
+            border-bottom-right-radius: 4px;
+        }
+
+        #status {
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel recording-panel">
+             <button id="record-button" title="Start/Stop Conversation">
+                <div class="icon-pause"></div>
+            </button>
+            <div class="recording-info">
+                <h3 id="recording-title">Recording of the call with the patient and the AI assistant</h3>
+            </div>
+            <div id="waveform" class="waveform">
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                 <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            </div>
+        </div>
+        <div class="panel call-details-panel">
+            <h2 class="call-details-title">&raquo; Call Details</h2>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <p>Type</p>
+                    <p class="value">Inbound</p>
+                </div>
+                <div class="detail-item">
+                    <p>Status</p>
+                    <p id="call-status" class="value">Not Started</p>
+                </div>
+                <div class="detail-item">
+                    <p>Duration</p>
+                    <p id="duration" class="value">00:00</p>
+                </div>
+                <div class="detail-item">
+                    <p>Answered by</p>
+                    <p class="value">AI Assistant</p>
+                </div>
+                <div class="detail-item">
+                    <p>Date</p>
+                    <p class="value" id="call-date"></p>
+                </div>
+                <div class="detail-item">
+                    <p>Patient</p>
+                    <p class="value">+155-0191</p>
+                </div>
+                 <div class="detail-item">
+                    <p>Reason</p>
+                    <p class="value">Checkup Appointment</p>
+                </div>
+                <div class="detail-item">
+                    <p>Appointment</p>
+                    <p class="value">Checkup</p>
+                </div>
+            </div>
+        </div>
+        <div class="panel transcripts-panel">
+             <h2>Transcripts</h2>
+             <div id="transcript-box">
+                <!-- Chat messages will be appended here -->
+             </div>
+             <div id="status">Click the red button to start the conversation.</div>
+        </div>
+    </div>
+
+    <script>
+        const recordButton = document.getElementById('record-button');
+        const transcriptBox = document.getElementById('transcript-box');
+        const statusDiv = document.getElementById('status');
+        const waveform = document.getElementById('waveform');
+        const callStatus = document.getElementById('call-status');
+        const durationDiv = document.getElementById('duration');
+        
+        document.getElementById('call-date').textContent = new Date().toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric'
+        });
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition;
+        
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            // CHANGED: Set to false to handle turn-taking manually without duplicating text
+            recognition.continuous = false; 
+            recognition.lang = 'en-US';
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+        } else {
+            statusDiv.textContent = "Sorry, your browser doesn't support Speech Recognition.";
+            recordButton.disabled = true;
+        }
+
+        let isCallActive = false;
+        let websocket;
+        let audioQueue = [];
+        let isPlayingAudio = false;
+        let startTime;
+        let timerInterval;
+        let silenceTimer = null; 
+
+        function startTimer() {
+            startTime = Date.now();
+            timerInterval = setInterval(() => {
+                const elapsed = new Date(Date.now() - startTime);
+                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+                durationDiv.textContent = `${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function connectWebSocket() {
+            // Use uuid logic if available, or timestamp
+            const conversationId = crypto.randomUUID ? crypto.randomUUID() : `conv_${Date.now()}`;
+            const wsUrl = `ws://${window.location.host}/ws/${conversationId}`;
+            websocket = new WebSocket(wsUrl);
+
+            websocket.onopen = () => {
+                console.log("WebSocket connected.");
+                callStatus.textContent = "In Progress";
+                statusDiv.textContent = "Connected. Waiting for agent...";
+                startTimer();
+            };
+
+            websocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                addMessageToTranscript('assistant', data.text);
+                
+                if (data.audio) {
+                    const audioBlob = b64toBlob(data.audio, 'audio/mpeg');
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    audioQueue.push(audioUrl);
+                    processAudioQueue();
+                }
+            };
+
+            websocket.onerror = (error) => {
+                console.error("WebSocket error:", error);
+                statusDiv.textContent = "Connection error.";
+                callStatus.textContent = "Failed";
+                endCallUI();
+            };
+
+            websocket.onclose = () => {
+                console.log("WebSocket disconnected.");
+                endCallUI();
+            };
+        }
+        
+        function endCallUI() {
+            isCallActive = false;
+            recordButton.classList.remove('recording');
+            statusDiv.textContent = "Call ended.";
+            callStatus.textContent = "Completed";
+            waveform.classList.remove('active');
+            stopTimer();
+            if (recognition) recognition.abort();
+        }
+
+        function processAudioQueue() {
+            if (isPlayingAudio || audioQueue.length === 0) {
+                return;
+            }
+            isPlayingAudio = true;
+            statusDiv.textContent = "Assistant is speaking...";
+
+            // Stop listening while AI speaks
+            if (recognition) {
+                clearTimeout(silenceTimer);
+                recognition.abort(); 
+            }
+
+            waveform.classList.remove('active');
+            
+            const audioUrl = audioQueue.shift();
+            const audio = new Audio(audioUrl);
+            
+            audio.play().catch(e => console.log("Audio play error:", e));
+            
+            audio.onended = () => {
+                URL.revokeObjectURL(audioUrl);
+                isPlayingAudio = false;
+                // Recursive call in case multiple audio chunks arrived
+                if (audioQueue.length > 0) {
+                    processAudioQueue();
+                } else if (isCallActive) {
+                    startListening();
+                }
+            };
+        }
+        
+        function startListening() {
+            if (isCallActive && !isPlayingAudio) {
+                statusDiv.textContent = "Listening...";
+                waveform.classList.add('active');
+                try {
+                    recognition.start();
+                } catch(e) {
+                    // Ignore error if already started
+                }
+            }
+        }
+
+        recordButton.addEventListener('click', () => {
+            if (!isCallActive) {
+                if (!SpeechRecognition) {
+                    alert("Browser not supported.");
+                    return;
+                }
+                isCallActive = true;
+                recordButton.classList.add('recording');
+                transcriptBox.innerHTML = ''; 
+                durationDiv.textContent = '00:00';
+                connectWebSocket();
+            } else {
+                if (websocket) websocket.close();
+                endCallUI();
+            }
+        });
+
+        if (recognition) {
+            recognition.onresult = (event) => {
+                clearTimeout(silenceTimer);
+                
+                // Get the latest result only
+                const currentResult = event.results[event.results.length - 1];
+                const transcript = currentResult[0].transcript;
+
+                // Simple "silence detection" logic
+                // If the user pauses for 1.5 seconds, we assume they are done.
+                silenceTimer = setTimeout(() => {
+                    if (isCallActive && transcript.trim().length > 0) {
+                        addMessageToTranscript('user', transcript.trim());
+                        
+                        if (websocket && websocket.readyState === WebSocket.OPEN) {
+                            websocket.send(transcript.trim());
+                            statusDiv.textContent = "Thinking...";
+                            recognition.stop(); // Stop gently
+                        }
+                    }
+                }, 1500); 
+            };
+
+            recognition.onerror = (event) => {
+                if (event.error === 'no-speech') {
+                    // Ignore no-speech errors, just restart if active
+                    return; 
+                }
+                console.error('Speech recognition error:', event.error);
+                waveform.classList.remove('active');
+            };
+
+            recognition.onend = () => {
+                waveform.classList.remove('active');
+                // If call is still active and AI isn't speaking, restart listener
+                if (isCallActive && !isPlayingAudio) {
+                    startListening();
+                }
+            };
+        }
+
+        function addMessageToTranscript(sender, text) {
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble', sender);
+            const textDiv = document.createElement('div');
+            textDiv.classList.add('text');
+            textDiv.textContent = text;
+            messageBubble.appendChild(textDiv);
+            transcriptBox.appendChild(messageBubble);
+            transcriptBox.scrollTop = transcriptBox.scrollHeight;
+        }
+
+        function b64toBlob(b64Data, contentType='', sliceSize=512) {
+            const byteCharacters = atob(b64Data);
+            const byteArrays = [];
+            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+                const slice = byteCharacters.slice(offset, offset + sliceSize);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                    byteNumbers[i] = slice.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                byteArrays.push(byteArray);
+            }
+            return new Blob(byteArrays, {type: contentType});
+        }
+    </script>
+</body>
+</html>
