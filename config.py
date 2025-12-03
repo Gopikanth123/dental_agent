@@ -20,7 +20,7 @@ class Config(BaseSettings):
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4o"
     OPENAI_TTS_MODEL: str = "tts-1"
-    OPENAI_TTS_VOICE: str = "shimmer" # alloy, echo, fable, onyx, nova, or shimmer
+    OPENAI_TTS_VOICE: str = "nova" # alloy, echo, fable, onyx, nova, or shimmer
 
     LOG_LEVEL: str = "INFO"
 
@@ -28,3 +28,4 @@ class Config(BaseSettings):
         env_file = ".env"
 
 config = Config()
+
