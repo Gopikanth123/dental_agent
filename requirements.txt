@@ -4,11 +4,11 @@ python-dotenv
 pydantic-settings
 langchain == 0.3.27
 langchain-community == 0.3.29
-langchain-core
+langchain-core == 0.3.80
 langchain-openai
 langgraph
 mcp
-langchain-mcp-adapters
+langchain-mcp-adapters == 0.1.14
 dateparser
 python-dateutil
 jinja2
