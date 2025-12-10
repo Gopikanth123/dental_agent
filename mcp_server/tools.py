@@ -1,108 +1,121 @@
 import json
 from typing import Optional
+from datetime import datetime
 from mcp_server.server import mcp
-from database import DUMMY_PATIENTS, DUMMY_APPOINTMENTS, DUMMY_AVAILABILITY, DUMMY_FAQ
+from database import DUMMY_PATIENTS, DUMMY_APPOINTMENTS
 from utils import parse_dob, parse_user_date, normalize_time
 
 @mcp.tool()
-def lookup_patient(first_name: str, last_name: str, dob: Optional[str] = None) -> str:
-    """Finds a patient record. Returns patient_id or error."""
+def lookup_patient(first_name: Optional[str] = None, last_name: Optional[str] = None) -> str:
+    """
+    Finds a patient by name.
+    """
     matches = []
+    f_query = first_name.lower() if first_name else ""
+    l_query = last_name.lower() if last_name else ""
+
     for pid, details in DUMMY_PATIENTS.items():
-        if details["first_name"].lower() == first_name.lower() and details["last_name"].lower() == last_name.lower():
-            matches.append({"patient_id": pid, **details})
-    
-    if not matches:
-        return json.dumps({"success": False, "error": "Patient not found."})
-    
-    if len(matches) > 1:
-        if dob:
-            for m in matches:
-                if m["dob"] == dob:
-                    return json.dumps({"success": True, "patient_id": m["patient_id"]})
-        return json.dumps({"success": False, "error": "Multiple patients found. Ask for DOB."})
-
-    return json.dumps({"success": True, "patient_id": matches[0]["patient_id"]})
-
-@mcp.tool()
-def register_new_patient(first_name: str, last_name: str, dob: str) -> str:
-    """Registers a new patient. DOB is required."""
-    valid_dob = parse_dob(dob)
-    if not valid_dob:
-        return json.dumps({"success": False, "error": "Invalid DOB format."})
-    
-    new_id = f"pat_{len(DUMMY_PATIENTS) + 1:03d}"
-    DUMMY_PATIENTS[new_id] = {
-        "first_name": first_name, 
-        "last_name": last_name, 
-        "dob": valid_dob, 
-        "appointment_ids": []
-    }
-    return json.dumps({"success": True, "patient_id": new_id})
-
-@mcp.tool()
-def get_patient_appointments(patient_id: str) -> str:
-    """Retrieves upcoming appointments for a patient."""
-    if patient_id not in DUMMY_PATIENTS:
-        return json.dumps({"success": False, "error": "Patient not found."})
+        # Fuzzy match: "Rose" matches "Rose Tyler"
+        f_match = not f_query or f_query in details["first_name"].lower()
+        l_match = not l_query or l_query in details["last_name"].lower()
         
-    apt_ids = DUMMY_PATIENTS[patient_id].get("appointment_ids", [])
-    apts = [DUMMY_APPOINTMENTS.get(aid) for aid in apt_ids if aid in DUMMY_APPOINTMENTS]
-    return json.dumps({"success": True, "appointments": apts})
+        if f_match and l_match:
+            matches.append({"patient_id": pid, **details})
+
+    if len(matches) == 1:
+        p = matches[0]
+        return json.dumps({
+            "success": True,
+            "patient_id": p["patient_id"],
+            "patient_name": p["first_name"],
+            "message": "Patient found."
+        })
+    elif len(matches) > 1:
+        return json.dumps({
+            "success": False, 
+            "error": "Multiple patients found. Please ask for Date of Birth."
+        })
+        
+    return json.dumps({
+        "success": False, 
+        "error": "No patient found with that name."
+    })
 
 @mcp.tool()
-def check_availability(date_text: str) -> str:
-    """Checks open slots for a natural language date."""
+def check_availability(date_text: str, time_text: str) -> str:
+    """
+    Checks if a time is valid.
+    FOR DEMO PURPOSES: Always returns TRUE if it's a Weekday 8am-5pm.
+    Ignores existing bookings to ensure 'Happy Path'.
+    """
+    # 1. Parse Date
     date_val = parse_user_date(date_text)
     if not date_val:
-        return json.dumps({"success": False, "error": "Invalid date."})
+        # Fallback swap check (if LLM swapped date/time)
+        date_val = parse_user_date(time_text)
+        if date_val:
+            # Swap variables
+            temp = date_text
+            date_text = time_text
+            time_text = temp
+        else:
+            return json.dumps({"success": False, "error": "I couldn't understand the date. Could you say the day again?"})
+
+    dt_obj = datetime.strptime(date_val, "%Y-%m-%d")
+    readable_date = dt_obj.strftime("%A, %B %d")
+
+    # 2. Weekend Check
+    if dt_obj.weekday() >= 5:
+        return json.dumps({"success": False, "error": "We're closed on weekends. How about a weekday?"})
+
+    # 3. Time Check
+    norm_time = normalize_time(time_text)
+    if not norm_time:
+        # Check if time is in the date string (e.g. "Monday 8am")
+        norm_time = normalize_time(date_text)
     
-    slots = DUMMY_AVAILABILITY.get(date_val, [])
-    if not slots:
-        return json.dumps({"success": False, "error": "No slots available."})
+    if not norm_time:
+        return json.dumps({"success": False, "error": "I didn't catch the time. Could you repeat it?"})
+
+    hour = int(norm_time.split(":")[0])
     
-    # Convert to readable AM/PM
-    readable = []
-    for t in sorted(slots):
-        h, m = map(int, t.split(":"))
-        suffix = "AM" if h < 12 else "PM"
-        readable.append(f"{h if h <= 12 else h-12}:{m:02d} {suffix}")
-    
-    return json.dumps({"success": True, "date": date_val, "available_slots": readable})
+    # 4. Business Hours (8am - 5pm)
+    if hour < 8 or hour >= 17:
+        return json.dumps({"success": False, "error": "We're open 8:00 a.m. to 5:00 p.m."})
+
+    # 5. SUCCESS (Collision check removed for Demo Stability)
+    return json.dumps({
+        "success": True,
+        "date": date_val,
+        "time": norm_time,
+        "readable_date": readable_date,
+        "message": f"Yes, {readable_date} at {time_text} is available!"
+    })
 
 @mcp.tool()
-def schedule_appointment(patient_id: str, date_text: str, time: str, reason: str) -> str:
-    """Schedules appointment. Requires patient_id, date, time, reason."""
+def schedule_appointment(patient_id: str, date_text: str, time_text: str, reason: str = "Check-up") -> str:
+    """Books the appointment."""
+    # Re-parse to be safe
     date_val = parse_user_date(date_text)
-    norm_time = normalize_time(time)
-    
-    if not date_val or not norm_time:
-        return json.dumps({"success": False, "error": "Invalid date or time."})
-    
-    # Check if slot exists
-    if norm_time not in DUMMY_AVAILABILITY.get(date_val, []):
-        return json.dumps({"success": False, "error": "Slot unavailable."})
-    
-    new_apt_id = f"apt_{len(DUMMY_APPOINTMENTS) + 101}"
-    pat = DUMMY_PATIENTS.get(patient_id)
-    
-    DUMMY_APPOINTMENTS[new_apt_id] = {
-        "appointment_id": new_apt_id, 
-        "patient_id": patient_id, 
-        "patient_name": f"{pat['first_name']} {pat['last_name']}",
-        "date": date_val, 
-        "time": norm_time, 
-        "reason": reason
-    }
-    DUMMY_PATIENTS[patient_id]["appointment_ids"].append(new_apt_id)
-    DUMMY_AVAILABILITY[date_val].remove(norm_time)
-    
-    return json.dumps({"success": True, "message": f"Booked for {date_val} at {time}."})
+    if not date_val: date_val = parse_user_date(time_text) # Swap fallback
 
-@mcp.tool()
-def get_faq_answer(topic: str) -> str:
-    """Returns FAQ answers."""
-    for k, v in DUMMY_FAQ.items():
-        if k in topic.lower():
-            return json.dumps({"success": True, "answer": v})
-    return json.dumps({"success": False, "error": "No info found."})
+    norm_time = normalize_time(time_text)
+    if not norm_time: norm_time = normalize_time(date_text) # Swap fallback
+
+    if not date_val or not norm_time:
+        return json.dumps({"success": False, "error": "Invalid parameters."})
+
+    new_id = f"apt_{len(DUMMY_APPOINTMENTS) + 1001}"
+    
+    DUMMY_APPOINTMENTS[new_id] = {
+        "patient_id": patient_id,
+        "date": date_val,
+        "time": norm_time,
+        "status": "confirmed"
+    }
+
+    return json.dumps({
+        "success": True,
+        "appointment_id": new_id,
+        "message": "Appointment confirmed."
+    })
