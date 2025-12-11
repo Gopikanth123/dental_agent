@@ -42,6 +42,46 @@ def lookup_patient(first_name: Optional[str] = None, last_name: Optional[str] = 
     })
 
 @mcp.tool()
+def register_patient(first_name: str, last_name: str, dob: str) -> str:
+    """
+    Registers a NEW patient. This should only be called after:
+    - The user says they have NOT been to the office before, OR
+    - lookup_patient failed and the user confirmed creation.
+
+    DOB is required and must be a valid date.
+    """
+
+    # Parse and validate DOB
+    parsed_dob = parse_dob(dob)
+    if not parsed_dob:
+        return json.dumps({
+            "success": False,
+            "error": "Invalid date of birth. Please provide DOB in a format like 'April 10 1994'."
+        })
+
+    # Generate a unique patient ID
+    new_count = len(DUMMY_PATIENTS) + 1
+    new_id = f"pat_{new_count:03d}"
+
+    # Save to in-memory database
+    DUMMY_PATIENTS[new_id] = {
+        "first_name": first_name,
+        "last_name": last_name,
+        "dob": parsed_dob,
+        "phone": "555-0000",
+        "email": "new.patient@example.com",
+        "appointment_ids": [],
+        "notes": "New patient registration."
+    }
+
+    return json.dumps({
+        "success": True,
+        "patient_id": new_id,
+        "patient_name": first_name,
+        "message": f"Welcome, {first_name}. I've created a new patient record for you."
+    })
+
+@mcp.tool()
 def check_availability(date_text: str, time_text: str) -> str:
     """
     Checks if a time is valid.
