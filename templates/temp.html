@@ -268,229 +268,301 @@
     </div>
 
     <script>
-        const recordButton = document.getElementById('record-button');
-        const transcriptBox = document.getElementById('transcript-box');
-        const statusDiv = document.getElementById('status');
-        const waveform = document.getElementById('waveform');
-        const callStatus = document.getElementById('call-status');
-        const durationDiv = document.getElementById('duration');
+const recordButton = document.getElementById('record-button');
+const transcriptBox = document.getElementById('transcript-box');
+const statusDiv = document.getElementById('status');
+const waveform = document.getElementById('waveform');
+const callStatus = document.getElementById('call-status');
+const durationDiv = document.getElementById('duration');
+
+document.getElementById('call-date').textContent = new Date().toLocaleDateString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric'
+});
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+} else {
+    statusDiv.textContent = "Sorry, your browser doesn't support Speech Recognition.";
+    recordButton.disabled = true;
+}
+
+let isCallActive = false;
+let websocket;
+let audioQueue = [];
+let isPlayingAudio = false;
+let isProcessingUserInput = false;
+let currentTranscript = '';
+let startTime;
+let timerInterval;
+
+// State flags for better control
+let isRecognitionActive = false;
+
+function startTimer() {
+    startTime = Date.now();
+    timerInterval = setInterval(() => {
+        const elapsed = new Date(Date.now() - startTime);
+        const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
+        durationDiv.textContent = `${minutes}:${seconds}`;
+    }, 1000);
+}
+
+function stopTimer() {
+    clearInterval(timerInterval);
+}
+
+function updateStatus(status) {
+    statusDiv.textContent = status;
+}
+
+function setWaveformActive(active) {
+    if (active) {
+        waveform.classList.add('active');
+    } else {
+        waveform.classList.remove('active');
+    }
+}
+
+function connectWebSocket() {
+    const conversationId = crypto.randomUUID ? crypto.randomUUID() : `conv_${Date.now()}`;
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const wsUrl = `${protocol}//${window.location.host}/ws/${conversationId}`;
+    
+    websocket = new WebSocket(wsUrl);
+
+    websocket.onopen = () => {
+        console.log("WebSocket connected.");
+        callStatus.textContent = "In Progress";
+        updateStatus("Connected. Waiting for agent...");
+        startTimer();
+    };
+
+    websocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        addMessageToTranscript('assistant', data.text);
         
-        document.getElementById('call-date').textContent = new Date().toLocaleDateString('en-US', {
-            month: 'short', day: 'numeric', year: 'numeric'
-        });
+        if (data.audio) {
+            const audioBlob = b64toBlob(data.audio, 'audio/mpeg');
+            const audioUrl = URL.createObjectURL(audioBlob);
+            audioQueue.push(audioUrl);
+            processAudioQueue();
+        }
+    };
 
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let recognition;
+    websocket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        updateStatus("Connection error. Check console.");
+        callStatus.textContent = "Failed";
+        endCallUI();
+    };
+
+    websocket.onclose = () => {
+        console.log("WebSocket disconnected.");
+        endCallUI();
+    };
+}
+
+function endCallUI() {
+    isCallActive = false;
+    isPlayingAudio = false;
+    isProcessingUserInput = false;
+    isRecognitionActive = false;
+    currentTranscript = '';
+    
+    recordButton.classList.remove('recording');
+    updateStatus("Call ended.");
+    callStatus.textContent = "Completed";
+    setWaveformActive(false);
+    stopTimer();
+    
+    if (recognition) {
+        try {
+            recognition.stop();
+        } catch(e) {
+            console.log('Recognition already stopped');
+        }
+    }
+    
+    // Clear audio queue
+    audioQueue.forEach(url => URL.revokeObjectURL(url));
+    audioQueue = [];
+}
+
+function processAudioQueue() {
+    if (isPlayingAudio || audioQueue.length === 0) {
+        return;
+    }
+    
+    isPlayingAudio = true;
+    isProcessingUserInput = false;
+    updateStatus("Assistant speaking...");
+    setWaveformActive(false);
+    
+    // Stop recognition immediately
+    if (recognition && recognition.state !== 'inactive') {
+        try {
+            recognition.stop();
+        } catch(e) {
+            console.log('Stop recognition error:', e);
+        }
+    }
+
+    const audioUrl = audioQueue.shift();
+    const audio = new Audio(audioUrl);
+    
+    audio.play().catch(e => {
+        console.log("Audio play error:", e);
+        // Continue even if audio fails
+        audioQueueCleanup(audioUrl);
+    });
+    
+    audio.onended = () => {
+        audioQueueCleanup(audioUrl);
+        isPlayingAudio = false;
         
-        if (SpeechRecognition) {
-            recognition = new SpeechRecognition();
-            // CHANGED: Set to false to handle turn-taking manually without duplicating text
-            recognition.continuous = false; 
-            recognition.lang = 'en-US';
-            recognition.interimResults = true;
-            recognition.maxAlternatives = 1;
-        } else {
-            statusDiv.textContent = "Sorry, your browser doesn't support Speech Recognition.";
-            recordButton.disabled = true;
-        }
-
-        let isCallActive = false;
-        let websocket;
-        let audioQueue = [];
-        let isPlayingAudio = false;
-        let startTime;
-        let timerInterval;
-        let silenceTimer = null; 
-
-        function startTimer() {
-            startTime = Date.now();
-            timerInterval = setInterval(() => {
-                const elapsed = new Date(Date.now() - startTime);
-                const minutes = String(elapsed.getUTCMinutes()).padStart(2, '0');
-                const seconds = String(elapsed.getUTCSeconds()).padStart(2, '0');
-                durationDiv.textContent = `${minutes}:${seconds}`;
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-        }
-
-        function connectWebSocket() {
-            // Use uuid logic if available, or timestamp
-            const conversationId = crypto.randomUUID ? crypto.randomUUID() : `conv_${Date.now()}`;
-            const wsUrl = `ws://${window.location.host}/ws/${conversationId}`;
-            websocket = new WebSocket(wsUrl);
-
-            websocket.onopen = () => {
-                console.log("WebSocket connected.");
-                callStatus.textContent = "In Progress";
-                statusDiv.textContent = "Connected. Waiting for agent...";
-                startTimer();
-            };
-
-            websocket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                addMessageToTranscript('assistant', data.text);
-                
-                if (data.audio) {
-                    const audioBlob = b64toBlob(data.audio, 'audio/mpeg');
-                    const audioUrl = URL.createObjectURL(audioBlob);
-                    audioQueue.push(audioUrl);
-                    processAudioQueue();
-                }
-            };
-
-            websocket.onerror = (error) => {
-                console.error("WebSocket error:", error);
-                statusDiv.textContent = "Connection error.";
-                callStatus.textContent = "Failed";
-                endCallUI();
-            };
-
-            websocket.onclose = () => {
-                console.log("WebSocket disconnected.");
-                endCallUI();
-            };
-        }
-        
-        function endCallUI() {
-            isCallActive = false;
-            recordButton.classList.remove('recording');
-            statusDiv.textContent = "Call ended.";
-            callStatus.textContent = "Completed";
-            waveform.classList.remove('active');
-            stopTimer();
-            if (recognition) recognition.abort();
-        }
-
-        function processAudioQueue() {
-            if (isPlayingAudio || audioQueue.length === 0) {
-                return;
-            }
-            isPlayingAudio = true;
-            statusDiv.textContent = "Assistant is speaking...";
-
-            // Stop listening while AI speaks
-            if (recognition) {
-                clearTimeout(silenceTimer);
-                recognition.abort(); 
-            }
-
-            waveform.classList.remove('active');
-            
-            const audioUrl = audioQueue.shift();
-            const audio = new Audio(audioUrl);
-            
-            audio.play().catch(e => console.log("Audio play error:", e));
-            
-            audio.onended = () => {
-                URL.revokeObjectURL(audioUrl);
-                isPlayingAudio = false;
-                // Recursive call in case multiple audio chunks arrived
-                if (audioQueue.length > 0) {
-                    processAudioQueue();
-                } else if (isCallActive) {
+        // Process next in queue or start listening
+        if (audioQueue.length > 0) {
+            processAudioQueue();
+        } else if (isCallActive) {
+            // Small delay for smoother transition
+            setTimeout(() => {
+                if (!isPlayingAudio && !isProcessingUserInput) {
                     startListening();
                 }
-            };
+            }, 300);
         }
-        
-        function startListening() {
-            if (isCallActive && !isPlayingAudio) {
-                statusDiv.textContent = "Listening...";
-                waveform.classList.add('active');
-                try {
-                    recognition.start();
-                } catch(e) {
-                    // Ignore error if already started
-                }
-            }
-        }
+    };
+    
+    audio.onpause = audio.onstop = () => {
+        audioQueueCleanup(audioUrl);
+        isPlayingAudio = false;
+    };
+}
 
-        recordButton.addEventListener('click', () => {
-            if (!isCallActive) {
-                if (!SpeechRecognition) {
-                    alert("Browser not supported.");
-                    return;
-                }
-                isCallActive = true;
-                recordButton.classList.add('recording');
-                transcriptBox.innerHTML = ''; 
-                durationDiv.textContent = '00:00';
-                connectWebSocket();
-            } else {
-                if (websocket) websocket.close();
-                endCallUI();
-            }
-        });
+function audioQueueCleanup(audioUrl) {
+    if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+    }
+}
 
-        if (recognition) {
-            recognition.onresult = (event) => {
-                clearTimeout(silenceTimer);
+function startListening() {
+    if (!isCallActive || isPlayingAudio || isProcessingUserInput || isRecognitionActive) {
+        return;
+    }
+    
+    updateStatus("Listening...");
+    setWaveformActive(true);
+    currentTranscript = '';
+    isRecognitionActive = true;
+    
+    try {
+        recognition.start();
+    } catch(e) {
+        console.log('Recognition start error:', e);
+        isRecognitionActive = false;
+        setTimeout(startListening, 100);
+    }
+}
+
+if (recognition) {
+    recognition.onresult = (event) => {
+        // Only process FINAL results to prevent duplicates
+        const lastResult = event.results[event.results.length - 1];
+        if (lastResult.isFinal && !isProcessingUserInput) {
+            const transcript = lastResult[0].transcript.trim();
+            if (transcript && transcript.length > 0) {
+                currentTranscript = transcript;
+                addMessageToTranscript('user', transcript);
                 
-                // Get the latest result only
-                const currentResult = event.results[event.results.length - 1];
-                const transcript = currentResult[0].transcript;
-
-                // Simple "silence detection" logic
-                // If the user pauses for 1.5 seconds, we assume they are done.
-                silenceTimer = setTimeout(() => {
-                    if (isCallActive && transcript.trim().length > 0) {
-                        addMessageToTranscript('user', transcript.trim());
-                        
-                        if (websocket && websocket.readyState === WebSocket.OPEN) {
-                            websocket.send(transcript.trim());
-                            statusDiv.textContent = "Thinking...";
-                            recognition.stop(); // Stop gently
-                        }
-                    }
-                }, 1500); 
-            };
-
-            recognition.onerror = (event) => {
-                if (event.error === 'no-speech') {
-                    // Ignore no-speech errors, just restart if active
-                    return; 
+                if (websocket && websocket.readyState === WebSocket.OPEN) {
+                    websocket.send(transcript);
+                    updateStatus("Thinking...");
+                    isProcessingUserInput = true;
+                    isRecognitionActive = false;
                 }
-                console.error('Speech recognition error:', event.error);
-                waveform.classList.remove('active');
-            };
+            }
+        }
+    };
 
-            recognition.onend = () => {
-                waveform.classList.remove('active');
-                // If call is still active and AI isn't speaking, restart listener
-                if (isCallActive && !isPlayingAudio) {
+    recognition.onerror = (event) => {
+        console.log('Recognition error:', event.error);
+        isRecognitionActive = false;
+        setWaveformActive(false);
+        
+        if (event.error !== 'aborted' && isCallActive && !isPlayingAudio && !isProcessingUserInput) {
+            // Restart after short delay for transient errors
+            setTimeout(() => {
+                if (!isPlayingAudio && !isProcessingUserInput) {
                     startListening();
                 }
-            };
+            }, 200);
         }
+    };
 
-        function addMessageToTranscript(sender, text) {
-            const messageBubble = document.createElement('div');
-            messageBubble.classList.add('message-bubble', sender);
-            const textDiv = document.createElement('div');
-            textDiv.classList.add('text');
-            textDiv.textContent = text;
-            messageBubble.appendChild(textDiv);
-            transcriptBox.appendChild(messageBubble);
-            transcriptBox.scrollTop = transcriptBox.scrollHeight;
+    recognition.onend = () => {
+        isRecognitionActive = false;
+        setWaveformActive(false);
+        
+        // Only restart if conditions are right
+        if (isCallActive && !isPlayingAudio && !isProcessingUserInput) {
+            startListening();
         }
+    };
+}
 
-        function b64toBlob(b64Data, contentType='', sliceSize=512) {
-            const byteCharacters = atob(b64Data);
-            const byteArrays = [];
-            for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-                const slice = byteCharacters.slice(offset, offset + sliceSize);
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                    byteNumbers[i] = slice.charCodeAt(i);
-                }
-                const byteArray = new Uint8Array(byteNumbers);
-                byteArrays.push(byteArray);
-            }
-            return new Blob(byteArrays, {type: contentType});
+recordButton.addEventListener('click', () => {
+    if (!isCallActive) {
+        if (!SpeechRecognition) {
+            alert("Browser not supported.");
+            return;
         }
-    </script>
+        
+        isCallActive = true;
+        recordButton.classList.add('recording');
+        transcriptBox.innerHTML = '';
+        durationDiv.textContent = '00:00';
+        connectWebSocket();
+    } else {
+        if (websocket) {
+            websocket.close();
+        }
+        endCallUI();
+    }
+});
+
+function addMessageToTranscript(sender, text) {
+    const messageBubble = document.createElement('div');
+    messageBubble.classList.add('message-bubble', sender);
+    const textDiv = document.createElement('div');
+    textDiv.classList.add('text');
+    textDiv.textContent = text;
+    messageBubble.appendChild(textDiv);
+    transcriptBox.appendChild(messageBubble);
+    transcriptBox.scrollTop = transcriptBox.scrollHeight;
+}
+
+function b64toBlob(b64Data, contentType='', sliceSize=512) {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+    return new Blob(byteArrays, {type: contentType});
+}
+</script>
 </body>
 </html>
