@@ -49,8 +49,16 @@ async def create_agent_graph(mcp_session):
                         continue
 
         # --- Dynamic System Prompt ---
+        is_first_turn = len(messages) == 0
         sys_prompt = SYSTEM_PROMPT.format(current_date=date.today())
-        
+
+        if not is_first_turn:
+            sys_prompt += (
+                "\n\nIMPORTANT:\n"
+                "- Do NOT repeat the greeting.\n"
+                "- Continue the existing conversation naturally."
+            )
+
         if patient_id and patient_name:
             sys_prompt += (
                 f"\n\nCURRENT PATIENT CONTEXT:\n"
@@ -61,10 +69,9 @@ async def create_agent_graph(mcp_session):
 
         messages_with_prompt = [SystemMessage(content=sys_prompt)] + messages
         response = await llm.ainvoke(messages_with_prompt)
-        
-        # We simply return the state. The CallbackHandler in main.py tracks the tokens.
+
         return {
-            "messages": [response],
+            "messages": messages + [response],
             "patient_id": patient_id,
             "patient_name": patient_name
         }
