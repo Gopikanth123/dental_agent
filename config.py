@@ -12,7 +12,7 @@ class Config(BaseSettings):
     # ElevenLabs Configuration
     ELEVENLABS_API_KEY: str
     ELEVENLABS_VOICE_ID: str = "4RZ84U1b4WCqpu57LvIq"
-    ELEVENLABS_MODEL: str = "eleven_turbo_v2_5"
+    ELEVENLABS_MODEL: str = "eleven_turbo_v2_5" # eleven_turbo_v2_5
 
     # Logging
     LOG_LEVEL: str = "INFO"

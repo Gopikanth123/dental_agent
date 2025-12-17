@@ -1028,13 +1028,15 @@ from langchain_core.callbacks import BaseCallbackHandler # IMPORT ADDED
 
 from config import config
 from agent.graph import create_agent_graph
+from logger_setup import setup_logging
 
 # Setup Logging
-logging.basicConfig(
-    level=config.LOG_LEVEL,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger("BrightSmile")
+setup_logging()
+# logging.basicConfig(
+#     level=config.LOG_LEVEL,
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
+logger = logging.getLogger("BrightSmile-Main")
 
 agent_workflow = None
 aclient = AsyncOpenAI(api_key=config.OPENAI_API_KEY)
