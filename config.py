@@ -4,45 +4,26 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# class Config(BaseSettings):
-#     # Groq for Intelligence (Llama 3)
-#     GROQ_API_KEY: str
-#     GROQ_MODEL: str = "llama-3.3-70b-versatile"
-
-#     LOG_LEVEL: str = "INFO"
-
-#     class Config:
-#         env_file = ".env"
-
-
-# class Config(BaseSettings):
-#     # OpenAI Configuration
-#     OPENAI_API_KEY: str
-#     OPENAI_MODEL: str = "gpt-4o"
-#     OPENAI_TTS_MODEL: str = "tts-1"
-#     OPENAI_TTS_VOICE: str = "nova" #alloy , echo, fable, onyx, nova, or shimmer
-
-#     LOG_LEVEL: str = "INFO"
-
-#     class Config:
-#         env_file = ".env"
-
 class Config(BaseSettings):
-    # OpenAI Configuration (Still used for LLM and Speech-to-Text)
+    # OpenAI Configuration
     OPENAI_API_KEY: str
     OPENAI_MODEL: str = "gpt-4o"
-    
-    # ElevenLabs Configuration (Used for Text-to-Speech)
-    ELEVENLABS_API_KEY: str
-    # You can find Voice IDs in the ElevenLabs VoiceLab. 
-    # Example ID (Rachel): "21m00Tcm4TlvDq8ikWAM"
-    ELEVENLABS_VOICE_ID: str = "4RZ84U1b4WCqpu57LvIq" 
-    ELEVENLABS_MODEL: str = "eleven_turbo_v2_5" # Turbo is best for real-time latency
 
+    # ElevenLabs Configuration
+    ELEVENLABS_API_KEY: str
+    ELEVENLABS_VOICE_ID: str = "4RZ84U1b4WCqpu57LvIq"
+    ELEVENLABS_MODEL: str = "eleven_turbo_v2_5"
+
+    # Logging
     LOG_LEVEL: str = "INFO"
+
+    # LangSmith / LangChain Tracing
+    LANGCHAIN_TRACING_V2: str = "true"
+    LANGCHAIN_ENDPOINT: str = "https://api.smith.langchain.com"
+    LANGCHAIN_API_KEY: str  # Make sure this is in your .env
+    LANGCHAIN_PROJECT: str = "BrightSmile-Voice-Agent"
 
     class Config:
         env_file = ".env"
-
 
 config = Config()
