@@ -4,12 +4,16 @@ from datetime import datetime
 from mcp_server.server import mcp
 from database import DUMMY_PATIENTS, DUMMY_APPOINTMENTS
 from utils import parse_dob, parse_user_date, normalize_time
+import logging
+
+logger = logging.getLogger("MCP-TOOLS") 
 
 @mcp.tool()
 def lookup_patient(first_name: Optional[str] = None, last_name: Optional[str] = None) -> str:
     """
     Finds a patient by name.
     """
+    logger.info(f"Looking up patient: first_name={first_name}, last_name={last_name}")
     matches = []
     f_query = first_name.lower() if first_name else ""
     l_query = last_name.lower() if last_name else ""
@@ -50,7 +54,7 @@ def register_patient(first_name: str, last_name: str, dob: str) -> str:
 
     DOB is required and must be a valid date.
     """
-
+    logger.info(f"Registering new patient: {first_name} {last_name}, DOB={dob}")
     # Parse and validate DOB
     parsed_dob = parse_dob(dob)
     if not parsed_dob:
@@ -88,6 +92,7 @@ def check_availability(date_text: str, time_text: str) -> str:
     FOR DEMO PURPOSES: Always returns TRUE if it's a Weekday 8am-5pm.
     Ignores existing bookings to ensure 'Happy Path'.
     """
+    logger.info(f"Checking availability for date='{date_text}', time='{time_text}'")
     # 1. Parse Date
     date_val = parse_user_date(date_text)
     if not date_val:
@@ -135,6 +140,7 @@ def check_availability(date_text: str, time_text: str) -> str:
 @mcp.tool()
 def schedule_appointment(patient_id: str, date_text: str, time_text: str, reason: str = "Check-up") -> str:
     """Books the appointment."""
+    logger.info(f"Scheduling appointment for patient_id={patient_id}, date='{date_text}', time='{time_text}', reason='{reason}'")
     # Re-parse to be safe
     date_val = parse_user_date(date_text)
     if not date_val: date_val = parse_user_date(time_text) # Swap fallback
