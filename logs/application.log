@@ -1,178 +1,106 @@
-2025-12-17 16:31:54,867 - [12724] - root - INFO - ✅ Logging started for 'application' -> D:\dental-agent\logs\application.log
-2025-12-17 16:31:55,706 - [12724] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:31:56,687 - [9968] - root - INFO - ✅ Logging started for 'application' -> D:\dental-agent\logs\application.log
-2025-12-17 16:31:56,726 - [9968] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:31:56,728 - [12724] - mcp.client.stdio - ERROR - Failed to parse JSONRPC message from server
-Traceback (most recent call last):
-  File "D:\dental-agent\myenv\Lib\site-packages\mcp\client\stdio\__init__.py", line 155, in stdout_reader
-    message = types.JSONRPCMessage.model_validate_json(line)
-              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "D:\dental-agent\myenv\Lib\site-packages\pydantic\main.py", line 766, in model_validate_json
-    return cls.__pydantic_validator__.validate_json(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pydantic_core._pydantic_core.ValidationError: 1 validation error for JSONRPCMessage
-  Invalid JSON: trailing characters at line 1 column 5 [type=json_invalid, input_value='2025-12-17 16:31:56,726 ...er Subprocess Started\r', input_type=str]
-    For further information visit https://errors.pydantic.dev/2.12/v/json_invalid
-2025-12-17 16:31:57,985 - [12724] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:32:15,652 - [23832] - root - INFO - ✅ Logging started for 'application' -> D:\dental-agent\logs\application.log
-2025-12-17 16:32:15,654 - [23832] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:22,429 - [29000] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:23,112 - [29000] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:33:23,855 - [24924] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:23,855 - [24924] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:23,867 - [24924] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
-2025-12-17 16:33:24,719 - [29000] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:33:32,439 - [12072] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:33,096 - [12072] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:33:33,793 - [17048] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:33,796 - [17048] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:33,805 - [17048] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
-2025-12-17 16:33:34,721 - [12072] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:33:40,643 - [23220] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:41,325 - [23220] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:33:42,102 - [21276] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:42,103 - [21276] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:42,115 - [21276] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
-2025-12-17 16:33:42,954 - [23220] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:33:47,053 - [13988] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:47,697 - [13988] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:33:48,375 - [6588] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:48,375 - [6588] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:48,386 - [6588] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
-2025-12-17 16:33:49,224 - [13988] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:33:51,711 - [15180] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:52,409 - [15180] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
-2025-12-17 16:33:53,105 - [28264] - root - INFO - Logging initialized. Writing to logs\application.log
-2025-12-17 16:33:53,105 - [28264] - MCP-Process - INFO - MCP Server Subprocess Started
-2025-12-17 16:33:53,116 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
-2025-12-17 16:33:53,959 - [15180] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
-2025-12-17 16:34:31,306 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:34:32,108 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:34:45,666 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:34:46,325 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:34:54,928 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:34:55,607 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:35:04,289 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:04,871 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:35:22,167 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:22,178 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:35:22,178 - [28264] - MCP-TOOLS - INFO - Registering new patient: Oven Jack, DOB=2003-11-13
-2025-12-17 16:35:22,987 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:23,701 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:35:38,872 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:39,581 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:35:56,056 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:56,064 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:35:56,065 - [28264] - MCP-TOOLS - INFO - Checking availability for date='tomorrow', time='3:00 p.m.'
-2025-12-17 16:35:57,449 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:57,459 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:35:57,459 - [28264] - MCP-TOOLS - INFO - Scheduling appointment for patient_id=pat_008, date='2025-12-18', time='15:00', reason='general checkup'
-2025-12-17 16:35:58,567 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:35:59,362 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:36:14,497 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:36:15,163 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:36:32,571 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:36:33,282 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:36:49,108 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:36:49,707 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:37:01,703 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:37:02,522 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:37:12,418 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:37:13,070 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:37:27,101 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:37:27,113 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:37:27,113 - [28264] - MCP-TOOLS - INFO - Registering new patient: Bobby Jack, DOB=13th November 2003
-2025-12-17 16:37:27,728 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:37:28,293 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:37:42,869 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:37:43,700 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:38:03,870 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:03,884 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:38:03,885 - [28264] - MCP-TOOLS - INFO - Checking availability for date='next Monday', time='3:00 p.m.'
-2025-12-17 16:38:08,833 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:38:08,833 - [28264] - MCP-TOOLS - INFO - Scheduling appointment for patient_id=pat_008, date='next Monday', time='3:00 p.m.', reason='General checkup'
-2025-12-17 16:38:12,141 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:12,833 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:38:30,078 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:30,693 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:38:45,951 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:46,638 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:38:58,629 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:59,223 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:38:59,265 - [15180] - BrightSmile-Main - INFO - Client 19a97662-afe5-4e49-9a6d-4aae0fc7e4b9 disconnected
-2025-12-17 16:38:59,395 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:38:59,997 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:39:10,937 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:39:11,653 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:39:13,579 - [15180] - BrightSmile-Main - ERROR - Error: Cannot call "receive" once a disconnect message has been received.
-2025-12-17 16:39:15,469 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:39:16,055 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:39:26,400 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:39:27,005 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:39:27,045 - [15180] - BrightSmile-Main - INFO - Client 353a3f8e-b45d-40fe-aca8-666fc1ec19c6 disconnected
-2025-12-17 16:39:30,462 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:39:31,025 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:39:53,126 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:39:53,764 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:40:05,174 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:05,716 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:40:14,632 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:15,778 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:40:26,920 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:26,931 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:40:26,932 - [28264] - MCP-TOOLS - INFO - Looking up patient: first_name=John, last_name=Doe
-2025-12-17 16:40:27,842 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:28,455 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:40:51,600 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:51,611 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:40:51,612 - [28264] - MCP-TOOLS - INFO - Checking availability for date='tomorrow', time='3:00 p.m.'
-2025-12-17 16:40:52,631 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:52,645 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:40:52,647 - [28264] - MCP-TOOLS - INFO - Scheduling appointment for patient_id=pat_001, date='tomorrow', time='3:00 p.m.', reason='Check-up'
-2025-12-17 16:40:53,628 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:40:54,269 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:41:13,413 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:41:14,183 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:41:26,723 - [15180] - BrightSmile-Main - ERROR - Error: Cannot call "receive" once a disconnect message has been received.
-2025-12-17 16:41:35,530 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:41:36,227 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:41:50,072 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:41:50,650 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:00,872 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:01,543 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:09,733 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:10,413 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:23,353 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:24,069 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:32,568 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:33,284 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:39,701 - [15180] - BrightSmile-Main - ERROR - Error: Cannot call "receive" once a disconnect message has been received.
-2025-12-17 16:42:42,911 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:43,628 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:42:56,862 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:42:57,388 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:43:06,160 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:06,171 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:43:06,172 - [28264] - MCP-TOOLS - INFO - Looking up patient: first_name=John, last_name=Dove
-2025-12-17 16:43:07,273 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:07,874 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:43:25,204 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:26,025 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:43:34,710 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:34,721 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:43:34,723 - [28264] - MCP-TOOLS - INFO - Registering new patient: John Dove, DOB=13 November 2003
-2025-12-17 16:43:35,714 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:36,573 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:43:58,804 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:43:58,818 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:43:58,819 - [28264] - MCP-TOOLS - INFO - Checking availability for date='tomorrow', time='3:00 p.m.'
-2025-12-17 16:44:00,227 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:44:00,239 - [28264] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
-2025-12-17 16:44:00,239 - [28264] - MCP-TOOLS - INFO - Scheduling appointment for patient_id=pat_008, date='Thursday, December 18', time='3:00 p.m.', reason='annual checkup'
-2025-12-17 16:44:01,045 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:44:02,070 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:44:15,281 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:44:15,996 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:44:32,382 - [15180] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
-2025-12-17 16:44:33,180 - [15180] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
-2025-12-17 16:44:40,325 - [15180] - BrightSmile-Main - ERROR - Error: Cannot call "receive" once a disconnect message has been received.
+2025-12-18 12:19:58,585 - [2860] - root - INFO - Logging initialized. Writing to logs\application.log
+2025-12-18 12:19:59,267 - [2860] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
+2025-12-18 12:19:59,972 - [17212] - root - INFO - Logging initialized. Writing to logs\application.log
+2025-12-18 12:19:59,972 - [17212] - MCP-Process - INFO - MCP Server Subprocess Started
+2025-12-18 12:19:59,982 - [17212] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2025-12-18 12:20:01,014 - [2860] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
+2025-12-18 12:20:23,382 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:20:25,202 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:20:38,630 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:20:39,447 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:20:50,779 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:20:51,404 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:21:11,601 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:21:12,422 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:21:21,233 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:21:21,250 - [17212] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 12:21:21,251 - [17212] - MCP-TOOLS - INFO - Registering new patient: John Lowe, DOB=2003-11-13
+2025-12-18 12:21:23,202 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:21:23,763 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:21:39,149 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:21:40,071 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:21:56,126 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:21:56,966 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:22:22,735 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:22:22,752 - [17212] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 12:22:22,752 - [17212] - MCP-TOOLS - INFO - Checking availability for date='tomorrow', time='3:00 p.m.'
+2025-12-18 12:22:24,832 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:22:24,847 - [17212] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 12:22:24,848 - [17212] - MCP-TOOLS - INFO - Scheduling: pat=pat_008, doc='Dr. Emily Carter', reason='tooth pain'
+2025-12-18 12:22:25,686 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:22:26,366 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 12:22:51,494 - [2860] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 12:22:52,072 - [2860] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:46:24,268 - [22548] - root - INFO - Logging initialized. Writing to logs\application.log
+2025-12-18 13:46:25,036 - [22548] - BrightSmile-Main - INFO - 🚀 Starting BrightSmile Agent...
+2025-12-18 13:46:25,876 - [25712] - root - INFO - Logging initialized. Writing to logs\application.log
+2025-12-18 13:46:25,876 - [25712] - MCP-Process - INFO - MCP Server Subprocess Started
+2025-12-18 13:46:25,893 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type ListToolsRequest
+2025-12-18 13:46:26,910 - [22548] - BrightSmile-Main - INFO - ✅ MCP Client connected to Tool Server.
+2025-12-18 13:47:23,274 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:47:24,936 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:47:40,810 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:47:42,034 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:47:59,139 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:47:59,957 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:48:16,751 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:48:17,364 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:48:36,617 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:48:36,632 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:48:36,633 - [25712] - MCP-TOOLS - INFO - Registering new patient: copy Jack, DOB=2003-11-13
+2025-12-18 13:48:38,781 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:48:39,504 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:48:58,225 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:48:58,236 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:48:58,237 - [25712] - MCP-TOOLS - INFO - Checking availability for date='Tomorrow', time='3:00 p.m.'
+2025-12-18 13:49:09,283 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:49:09,292 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:49:09,292 - [25712] - MCP-TOOLS - INFO - Scheduling: pat=pat_008, doc='Dr. Emily Carter', reason='checkup'
+2025-12-18 13:49:11,126 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:49:11,834 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:49:41,181 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:49:41,725 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:49:56,788 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:49:57,353 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:50:07,556 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:50:08,106 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:50:39,094 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:50:40,013 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:51:02,647 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:51:03,361 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:51:13,806 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:51:15,233 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:51:41,661 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:51:42,472 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:51:58,352 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:51:58,925 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:52:05,371 - [22548] - BrightSmile-Main - ERROR - Error: Cannot call "receive" once a disconnect message has been received.
+2025-12-18 13:52:16,659 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:52:17,323 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:52:28,123 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:52:28,858 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:52:38,179 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:52:38,886 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:52:50,486 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:52:50,500 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:52:50,501 - [25712] - MCP-TOOLS - INFO - Looking up patient: first_name=John, last_name=Doe
+2025-12-18 13:52:51,206 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:52:51,764 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:53:07,374 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:53:08,395 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:53:26,217 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:53:26,226 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:53:26,226 - [25712] - MCP-TOOLS - INFO - Checking availability for date='Monday', time='3:00 p.m.'
+2025-12-18 13:53:28,653 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:53:28,666 - [25712] - mcp.server.lowlevel.server - INFO - Processing request of type CallToolRequest
+2025-12-18 13:53:28,666 - [25712] - MCP-TOOLS - INFO - Scheduling: pat=pat_001, doc='Dr. Emily Carter', reason='annual checkup'
+2025-12-18 13:53:29,901 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:53:30,720 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:53:53,454 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:53:54,081 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:54:11,681 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:54:12,500 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:54:28,987 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:54:30,217 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
+2025-12-18 13:54:51,285 - [22548] - httpx - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-18 13:54:52,028 - [22548] - httpx - INFO - HTTP Request: POST https://api.elevenlabs.io/v1/text-to-speech/4RZ84U1b4WCqpu57LvIq?output_format=mp3_44100_128 "HTTP/1.1 200 OK"
