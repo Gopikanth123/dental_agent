@@ -23,6 +23,8 @@ class Config(BaseSettings):
     LANGCHAIN_API_KEY: str  # Make sure this is in your .env
     LANGCHAIN_PROJECT: str = "BrightSmile-Voice-Agent"
 
+    TIMEZONE: str = "America/New_York"
+
     class Config:
         env_file = ".env"
 
