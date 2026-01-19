@@ -87,9 +87,10 @@
 #     return workflow.compile(checkpointer=MemorySaver())
 
 import json
-from datetime import date
+from datetime import date, datetime
 from typing import Annotated, List, Optional
 from typing_extensions import TypedDict
+import pytz
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START
@@ -102,6 +103,17 @@ from langchain_mcp_adapters.tools import load_mcp_tools
 from config import config
 from agent.prompts import SYSTEM_PROMPT
 from database import DUMMY_DOCTORS  # <--- REQUIRED for dynamic context
+# from utils import get_office_time
+import logging
+from logger_setup import setup_logging
+
+# Setup Logging
+setup_logging()
+# logging.basicConfig(
+#     level=config.LOG_LEVEL,
+#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# )
+logger = logging.getLogger("GraphBuilder")
 
 # =============================================================================
 # HELPER: Format Doctor Data for Prompt
@@ -126,6 +138,7 @@ class AgentState(TypedDict):
     messages: Annotated[List[AnyMessage], add_messages]
     patient_id: Optional[str]
     patient_name: Optional[str]
+    timezone: Optional[str]              
 
 # =============================================================================
 # GRAPH BUILDER
@@ -149,6 +162,21 @@ async def create_agent_graph(mcp_session):
         messages = state["messages"]
         patient_id = state.get("patient_id")
         patient_name = state.get("patient_name")
+
+        user_tz_str = state.get("timezone", "UTC")
+
+        try:
+            # 2. Create the timezone object from the string
+            user_tz = pytz.timezone(user_tz_str)
+        except pytz.UnknownTimeZoneError:
+            # If browser sent garbage (e.g. "Undefined"), fallback to UTC
+            user_tz = pytz.utc
+
+        # 3. Get CURRENT SERVER TIME in UTC
+        utc_now = datetime.now(pytz.utc)
+        
+        # 4. Convert UTC -> User's Browser Time
+        user_local_time = utc_now.astimezone(user_tz)
 
         # ---------------------------------------------------------------------
         # Identity Recovery (Optimization: Only run if ID is missing)
@@ -180,10 +208,17 @@ async def create_agent_graph(mcp_session):
         # ---------------------------------------------------------------------
         # 1. Fetch real-time doctor data
         doctor_context = format_doctor_context()
+        # Format the time for the AI using the USER'S local time
+        current_date_str = user_local_time.strftime("%A, %B %d, %Y")
+        current_time_str = user_local_time.strftime("%I:%M %p")
+        # greeting = get_time_based_greeting()
+        # Helpful debug log to see it working
+        logger.info(f"DEBUG: Server UTC: {utc_now} | User ({user_tz_str}): {user_local_time}")
 
         # 2. Inject into Prompt (Efficiency: Done in memory, not hardcoded)
         sys_prompt = SYSTEM_PROMPT.format(
-            current_date=date.today(),
+            current_date=current_date_str,
+            current_time=current_time_str,
             doctor_info=doctor_context  # <--- CRITICAL INJECTION
         )
 
@@ -219,7 +254,8 @@ async def create_agent_graph(mcp_session):
             # 'add_messages' in AgentState handles the appending.
             "messages": [response], 
             "patient_id": patient_id,
-            "patient_name": patient_name
+            "patient_name": patient_name,
+            "timezone": user_tz_str
         }
 
     # -------------------------------------------------------------------------
