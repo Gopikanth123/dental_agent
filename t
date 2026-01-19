@@ -78,4 +78,5 @@ def parse_user_date(date_string: str) -> str:
 def parse_dob(dob_str: str) -> str:
     parsed = dateparser.parse(str(dob_str), settings={'PREFER_DATES_FROM': 'past'})
     if parsed: return parsed.strftime("%Y-%m-%d")
+
     return None
