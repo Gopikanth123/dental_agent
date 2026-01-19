@@ -300,9 +300,9 @@
 
     if (SpeechRecognition) {
         recognition = new SpeechRecognition();
-        recognition.continuous = false;
+        recognition.continuous = true; // MUST BE TRUE for continuous interaction
         recognition.lang = 'en-US';
-        recognition.interimResults = true;
+        recognition.interimResults = true; // MUST BE TRUE for interruptions (barge-in)
         recognition.maxAlternatives = 1;
     } else {
         statusDiv.textContent = "Sorry, your browser doesn't support Speech Recognition.";
@@ -318,9 +318,9 @@
     let startTime;
     let timerInterval;
     let totalTokens = 0;
-
-    // State flags for better control
-    let isRecognitionActive = false;
+    
+    // Audio object tracker
+    let currentAudioObj = null;
 
     function startTimer() {
         startTime = Date.now();
@@ -350,33 +350,38 @@
 
     function connectWebSocket() {
         const conversationId = crypto.randomUUID ? crypto.randomUUID() : `conv_${Date.now()}`;
+        
+        // 1. TIMEZONE LOGIC
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        const wsUrl = `${protocol}//${window.location.host}/ws/${conversationId}`;
+        const wsUrl = `${protocol}//${window.location.host}/ws/${conversationId}?tz=${encodeURIComponent(userTimezone)}`;
         
         websocket = new WebSocket(wsUrl);
 
         websocket.onopen = () => {
-            console.log("WebSocket connected.");
+            console.log(`WebSocket connected. Timezone: ${userTimezone}`);
             callStatus.textContent = "In Progress";
             updateStatus("Connected. Waiting for agent...");
             startTimer();
+            // Start listening immediately
+            startListening();
         };
 
         websocket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             
-            // 1. Display Text
+            // 2. Display Text
             addMessageToTranscript('assistant', data.text);
 
-            // 2. Process Usage Stats (if present)
+            // 3. Process Usage Stats
             if (data.usage && data.usage.total_tokens) {
                 totalTokens += data.usage.total_tokens;
-                // Estimate cost (assuming GPT-4o input/output blend ~ $5 per 1M tokens)
                 const cost = (totalTokens / 1000) * 0.005; 
                 tokenDisplay.textContent = `Tokens: ${totalTokens} | Est. Cost: $${cost.toFixed(4)}`;
             }
             
-            // 3. Queue Audio with End Call Flag
+            // 4. Queue Audio
             if (data.audio) {
                 const audioBlob = b64toBlob(data.audio, 'audio/mpeg');
                 const audioUrl = URL.createObjectURL(audioBlob);
@@ -386,14 +391,13 @@
                 });
                 processAudioQueue();
             } else if (data.end_call) {
-                // If there's no audio but the call needs to end (rare edge case)
                 endCallUI();
             }
         };
 
         websocket.onerror = (error) => {
             console.error("WebSocket error:", error);
-            updateStatus("Connection error. Check console.");
+            updateStatus("Connection error.");
             callStatus.textContent = "Failed";
             endCallUI();
         };
@@ -406,10 +410,8 @@
 
     function endCallUI() {
         isCallActive = false;
-        isPlayingAudio = false;
-        isProcessingUserInput = false;
-        isRecognitionActive = false;
-        currentTranscript = '';
+        
+        stopAudioPlayback(); // Stop any bot audio
         
         recordButton.classList.remove('recording');
         updateStatus("Call ended.");
@@ -420,14 +422,20 @@
         if (recognition) {
             try {
                 recognition.stop();
-            } catch(e) {
-                console.log('Recognition already stopped');
-            }
+            } catch(e) { }
         }
-        
-        // Clear audio queue
+    }
+
+    // 2. IMMEDIATE AUDIO CUT-OFF FUNCTION
+    function stopAudioPlayback() {
+        if (currentAudioObj) {
+            currentAudioObj.pause();
+            currentAudioObj = null;
+        }
+        // Clear pending queue
         audioQueue.forEach(item => URL.revokeObjectURL(item.url));
         audioQueue = [];
+        isPlayingAudio = false;
     }
 
     function processAudioQueue() {
@@ -437,54 +445,31 @@
         
         isPlayingAudio = true;
         isProcessingUserInput = false;
-        updateStatus("Assistant speaking...");
-        setWaveformActive(false);
         
-        // Stop recognition immediately so we don't record the AI speaking
-        if (recognition && recognition.state !== 'inactive') {
-            try {
-                recognition.stop();
-            } catch(e) {
-                console.log('Stop recognition error:', e);
-            }
-        }
+        // Note: We DO NOT stop recognition here. Mic stays open.
 
         const queueItem = audioQueue.shift();
-        const audio = new Audio(queueItem.url);
+        currentAudioObj = new Audio(queueItem.url);
         
-        audio.play().catch(e => {
+        currentAudioObj.play().catch(e => {
             console.log("Audio play error:", e);
-            // Cleanup on error
             audioQueueCleanup(queueItem.url);
         });
         
-        audio.onended = () => {
+        currentAudioObj.onended = () => {
             audioQueueCleanup(queueItem.url);
             isPlayingAudio = false;
+            currentAudioObj = null;
             
-            // Check if this was the last message that should end the call
             if (queueItem.endCall) {
                 updateStatus("Call ended by Agent.");
                 endCallUI();
                 return;
             }
 
-            // Process next in queue or start listening
             if (audioQueue.length > 0) {
                 processAudioQueue();
-            } else if (isCallActive) {
-                // Small delay for smoother transition
-                setTimeout(() => {
-                    if (!isPlayingAudio && !isProcessingUserInput) {
-                        startListening();
-                    }
-                }, 300);
-            }
-        };
-        
-        audio.onpause = audio.onstop = () => {
-            audioQueueCleanup(queueItem.url);
-            isPlayingAudio = false;
+            } 
         };
     }
 
@@ -495,67 +480,57 @@
     }
 
     function startListening() {
-        if (!isCallActive || isPlayingAudio || isProcessingUserInput || isRecognitionActive) {
-            return;
-        }
+        if (!isCallActive) return;
         
         updateStatus("Listening...");
         setWaveformActive(true);
         currentTranscript = '';
-        isRecognitionActive = true;
         
         try {
             recognition.start();
         } catch(e) {
-            console.log('Recognition start error:', e);
-            isRecognitionActive = false;
-            setTimeout(startListening, 100);
+            // Already started
         }
     }
 
     if (recognition) {
         recognition.onresult = (event) => {
-            // Only process FINAL results to prevent duplicates
             const lastResult = event.results[event.results.length - 1];
-            if (lastResult.isFinal && !isProcessingUserInput) {
-                const transcript = lastResult[0].transcript.trim();
-                if (transcript && transcript.length > 0) {
+            const transcript = lastResult[0].transcript.trim();
+
+            // 3. INTERRUPTION CHECK
+            // If user speaks (even interim) while bot is playing -> CUT OFF
+            if (transcript.length > 0 && isPlayingAudio) {
+                console.log("Interruption detected: " + transcript);
+                stopAudioPlayback();
+                updateStatus("Interrupted! Listening...");
+            }
+
+            if (lastResult.isFinal) {
+                if (transcript.length > 0) {
                     currentTranscript = transcript;
                     addMessageToTranscript('user', transcript);
                     
                     if (websocket && websocket.readyState === WebSocket.OPEN) {
-                        // Send simple text; Python backend handles JSON parsing implicitly
                         websocket.send(JSON.stringify({ text: transcript }));
                         updateStatus("Thinking...");
                         isProcessingUserInput = true;
-                        isRecognitionActive = false;
                     }
                 }
             }
         };
 
         recognition.onerror = (event) => {
+            if (event.error === 'no-speech') return; // Ignore silence
             console.log('Recognition error:', event.error);
-            isRecognitionActive = false;
-            setWaveformActive(false);
-            
-            if (event.error !== 'aborted' && isCallActive && !isPlayingAudio && !isProcessingUserInput) {
-                // Restart after short delay for transient errors
-                setTimeout(() => {
-                    if (!isPlayingAudio && !isProcessingUserInput) {
-                        startListening();
-                    }
-                }, 200);
-            }
         };
 
         recognition.onend = () => {
-            isRecognitionActive = false;
-            setWaveformActive(false);
-            
-            // Only restart if conditions are right
-            if (isCallActive && !isPlayingAudio && !isProcessingUserInput) {
-                startListening();
+            // Restart if call is still active
+            if (isCallActive) {
+                try {
+                    recognition.start();
+                } catch (e) {}
             }
         };
     }
@@ -572,7 +547,6 @@
             transcriptBox.innerHTML = '';
             durationDiv.textContent = '00:00';
             
-            // Reset Tokens
             totalTokens = 0;
             tokenDisplay.textContent = "Tokens: 0 | Cost: $0.0000";
 
